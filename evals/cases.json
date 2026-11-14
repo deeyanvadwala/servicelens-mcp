@@ -1,0 +1,63 @@
+[
+  {
+    "id": "list-services",
+    "question": "List the services in the catalog.",
+    "must_include": ["servicelens-mcp", "Pokepedia", "AgroRishi"]
+  },
+  {
+    "id": "find-by-topic",
+    "question": "Which service is about a voice-controlled assistant?",
+    "must_include": ["Phoenix"]
+  },
+  {
+    "id": "unknown-service",
+    "question": "Who owns the service named billing-engine-9000?",
+    "must_include_any": [
+      "no service", "not found", "doesn't exist", "does not exist",
+      "couldn't find", "could not find", "not in the catalog", "no repo",
+      "isn't in", "is not in", "no such"
+    ]
+  },
+  {
+    "id": "owner-fallback",
+    "question": "Who owns skills-hello-github-actions?",
+    "must_include": ["deeyanvadwala"]
+  },
+  {
+    "id": "no-codeowners",
+    "question": "Which services have no CODEOWNERS file?",
+    "must_include_any": ["all 19", "every", "all of", "none of", "servicelens-mcp"]
+  },
+  {
+    "id": "most-stale",
+    "question": "Which service has gone the longest without a push?",
+    "must_include": ["ProdigyInfotech_CS_Tasks"]
+  },
+  {
+    "id": "no-ci",
+    "question": "Which services have no CI configured?",
+    "must_include": ["Xylophone"]
+  },
+  {
+    "id": "honest-health",
+    "question": "Are any services unhealthy?",
+    "must_include_any": [
+      "no ci", "without ci", "not monitored", "unmonitored", "lack ci",
+      "lacking ci", "no continuous", "aren't monitored", "no workflow"
+    ]
+  },
+  {
+    "id": "version-none",
+    "question": "What version is servicelens-mcp at?",
+    "must_include_any": [
+      "no release", "no tag", "no version", "not tagged", "no known",
+      "none", "hasn't been tagged", "no releases"
+    ]
+  },
+  {
+    "id": "attention-report",
+    "question": "What needs attention in the catalog?",
+    "must_include": ["CODEOWNERS"],
+    "must_include_any": ["stale", "untouched", "inactive", "archive", "days"]
+  }
+]
