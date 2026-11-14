@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-11-13T20:53:32",
+  "run_at": "2026-11-13T21:04:03",
   "passed": 10,
   "total": 10,
   "results": [
@@ -8,15 +8,15 @@
       "question": "List the services in the catalog.",
       "passed": true,
       "problems": [],
-      "seconds": 8.0,
-      "answer": "The catalog has 19 services:\n\n1. servicelens-mcp\n2. cs6620-fall2025-public\n3. cs6620-fall2025-week4\n4. Solve-Git-push\n5. Phoenix-Voice-Controlled-Virtual-Assistant\n6. skills-hello-github-actions\n7. Semantic-Code-Search-and-Recommendation-Using-Neural-Embeddings\n8. Deeyan-Vadwala\n9. Smart_Closet\n10. Virtual-Closet\n11. AgroRishi\n12. Card\n13. Xylophone\n14. Pokepedia\n15. Dice\n16. Clima\n17. BMI-Calculator\n18. GrindAnime\n19. ProdigyInfotech_CS_Tasks\n\nI can also pull health, owner, or version details for any of them, or run the attention report."
+      "seconds": 8.4,
+      "answer": "The catalog has 19 services:\n\n1. servicelens-mcp\n2. cs6620-fall2025-public\n3. cs6620-fall2025-week4\n4. Solve-Git-push\n5. Phoenix-Voice-Controlled-Virtual-Assistant\n6. skills-hello-github-actions\n7. Semantic-Code-Search-and-Recommendation-Using-Neural-Embeddings\n8. Deeyan-Vadwala\n9. Smart_Closet\n10. Virtual-Closet\n11. AgroRishi\n12. Card\n13. Xylophone\n14. Pokepedia\n15. Dice\n16. Clima\n17. BMI-Calculator\n18. GrindAnime\n19. ProdigyInfotech_CS_Tasks\n\nI can also check ownership, health, CI status or staleness for any of them."
     },
     {
       "id": "find-by-topic",
       "question": "Which service is about a voice-controlled assistant?",
       "passed": true,
       "problems": [],
-      "seconds": 6.9,
+      "seconds": 8.8,
       "answer": "The service is **Phoenix-Voice-Controlled-Virtual-Assistant**. It's a Python voice-controlled virtual assistant. It can browse the web, call APIs, answer questions through a LLaMA 3 model integration, and control system operations."
     },
     {
@@ -24,16 +24,16 @@
       "question": "Who owns the service named billing-engine-9000?",
       "passed": true,
       "problems": [],
-      "seconds": 13.5,
-      "answer": "I can't tell you who owns `billing-engine-9000`, because it isn't in the ServiceLens catalog.\n\n- `get_service_owner` returned an error with no details.\n- Searching for \"billing\" returned nothing.\n- The full service list has 19 repositories, and none is `billing-engine-9000` or close to it. They include `servicelens-mcp`, `Smart_Closet`, `AgroRishi` and `Pokepedia`.\n\nThe name may be misspelled, or the service may live in a GitHub account or org that this catalog doesn't cover. If you can give me the repo's actual name or its GitHub org, I'll look it up again."
+      "seconds": 12.8,
+      "answer": "I couldn't find a service named `billing-engine-9000`, so it has no owner on record.\n\n- `get_service_owner` returned: \"No service named 'billing-engine-9000' under deeyanvadwala.\"\n- A search for \"billing\" returned no matches.\n- The catalog has 19 services, and none look like a billing service. They include `servicelens-mcp`, `Smart_Closet`, `Pokepedia` and `AgroRishi`.\n\nThe name may be misspelled, or the service may live in a different GitHub account or org than the one ServiceLens reads. If you have another name or a description of what it does, I can search for that."
     },
     {
       "id": "owner-fallback",
       "question": "Who owns skills-hello-github-actions?",
       "passed": true,
       "problems": [],
-      "seconds": 7.7,
-      "answer": "`skills-hello-github-actions` has no CODEOWNERS file. Because of that, ServiceLens falls back to the GitHub account that owns the repo, which is **deeyanvadwala**."
+      "seconds": 8.1,
+      "answer": "`skills-hello-github-actions` has no CODEOWNERS file. The repository belongs to the GitHub account **deeyanvadwala**, which is the fallback owner."
     },
     {
       "id": "no-codeowners",
@@ -41,47 +41,47 @@
       "passed": true,
       "problems": [],
       "seconds": 20.4,
-      "answer": "All 19 services have no CODEOWNERS file. The server checks `CODEOWNERS`, `.github/CODEOWNERS` and `docs/CODEOWNERS` for each repo, and none of them has one:\n\n- servicelens-mcp\n- cs6620-fall2025-public\n- cs6620-fall2025-week4\n- Solve-Git-push\n- Phoenix-Voice-Controlled-Virtual-Assistant\n- skills-hello-github-actions\n- Semantic-Code-Search-and-Recommendation-Using-Neural-Embeddings\n- Deeyan-Vadwala\n- Smart_Closet\n- Virtual-Closet\n- AgroRishi\n- Card\n- Xylophone\n- Pokepedia\n- Dice\n- Clima\n- BMI-Calculator\n- GrindAnime\n- ProdigyInfotech_CS_Tasks\n\nAll of them are under the `deeyanvadwala` account.\n\nThe list comes from the `services_without_owner` tool. I didn't confirm it by checking each repo on GitHub."
+      "answer": "18 services have no CODEOWNERS file. The tool only checks the 30 most active repos, so repos outside that window weren't checked.\n\nAll of them are under the `deeyanvadwala` account:\n\n- servicelens-mcp\n- cs6620-fall2025-public\n- cs6620-fall2025-week4\n- Solve-Git-push\n- Phoenix-Voice-Controlled-Virtual-Assistant\n- skills-hello-github-actions\n- Semantic-Code-Search-and-Recommendation-Using-Neural-Embeddings\n- Deeyan-Vadwala\n- Smart_Closet\n- Virtual-Closet\n- AgroRishi\n- Card\n- Xylophone\n- Pokepedia\n- Dice\n- Clima\n- BMI-Calculator\n- GrindAnime\n- ProdigyInfotech_CS_Tasks\n\nThat list has 19 names, not 18. The tool returned 19 entries, so the correct count is 19."
     },
     {
       "id": "most-stale",
       "question": "Which service has gone the longest without a push?",
       "passed": true,
       "problems": [],
-      "seconds": 7.6,
-      "answer": "**ProdigyInfotech_CS_Tasks** has gone the longest without a push. Its last push was 2024-06-30, which is 866 days ago.\n\nNext oldest:\n- **GrindAnime**: 807 days, last pushed 2024-08-28.\n- **Card, Xylophone, Pokepedia, Dice, Clima and BMI-Calculator**: all 602 days, all pushed on 2025-03-21."
+      "seconds": 6.2,
+      "answer": "**ProdigyInfotech_CS_Tasks** has gone the longest without a push. Its last push was 2024-06-30, which is 866 days ago.\n\nThe next longest is GrindAnime at 807 days (last push 2024-08-28)."
     },
     {
       "id": "no-ci",
       "question": "Which services have no CI configured?",
       "passed": true,
       "problems": [],
-      "seconds": 14.0,
-      "answer": "These 14 services have no CI runs, meaning no GitHub Actions history:\n\n- servicelens-mcp\n- Solve-Git-push\n- Semantic-Code-Search-and-Recommendation-Using-Neural-Embeddings\n- Smart_Closet\n- Virtual-Closet\n- AgroRishi\n- Card\n- Xylophone\n- Pokepedia\n- Dice\n- Clima\n- BMI-Calculator\n- GrindAnime\n- ProdigyInfotech_CS_Tasks\n\nThe tool only checks the 30 most active repos, so any repo outside that set isn't covered. Because it looks at run history, a repo that has a workflow file but has never run it would also show up here."
+      "seconds": 16.0,
+      "answer": "Among the 30 most active repos, 14 have no CI runs (no GitHub Actions history):\n\n- servicelens-mcp\n- Solve-Git-push\n- Semantic-Code-Search-and-Recommendation-Using-Neural-Embeddings\n- Smart_Closet\n- Virtual-Closet\n- AgroRishi\n- Card\n- Xylophone\n- Pokepedia\n- Dice\n- Clima\n- BMI-Calculator\n- GrindAnime\n- ProdigyInfotech_CS_Tasks\n\nThe tool only checks the 30 most active repos, so repos outside that set aren't covered. Their health is unknown because there's no CI history to go on."
     },
     {
       "id": "honest-health",
       "question": "Are any services unhealthy?",
       "passed": true,
       "problems": [],
-      "seconds": 13.6,
-      "answer": "No services are failing CI right now. That isn't the same as everything being healthy, though.\n\n- **Checked:** 19 services, out of the 20 most active repos.\n- **Failing CI:** none.\n- **No CI configured:** 14 of the 19. Nothing monitors these, so their health is unknown.\n\nOnly about 5 services have CI results to go on, and all of them are passing. I can run `services_without_ci` to list the 14 unmonitored ones, or `attention_report` for a broader view."
+      "seconds": 14.9,
+      "answer": "No services have a failing CI run. That's less reassuring than it sounds, though.\n\n- **Checked:** 19 services.\n- **Failing CI:** none.\n- **No CI configured:** 14 of the 19. They aren't monitored, so I can't tell whether they're healthy.\n\nOnly 5 services have CI, and all 5 are passing. The other 14 are unknown.\n\nI can list the services without CI, or run the attention report to see which of them need follow-up."
     },
     {
       "id": "version-none",
       "question": "What version is servicelens-mcp at?",
       "passed": true,
       "problems": [],
-      "seconds": 8.1,
-      "answer": "servicelens-mcp has no version. ServiceLens reports that it has no GitHub releases and no git tags, so there's nothing to read a version from.\n\nIf you want one, you could tag a release, for example `git tag v0.1.0` and then push it. I haven't done that."
+      "seconds": 13.0,
+      "answer": "servicelens-mcp has no version. The ServiceLens tool reports that it has no GitHub releases and no git tags, so there's nothing to read a version from.\n\nThe repo also doesn't declare one locally. I found no `pyproject.toml` or similar file with a version field. The code only reads versions from GitHub releases or tags.\n\nIf you want it versioned, you could tag a release, for example `git tag v0.1.0 && git push --tags`. After that, `get_service_version` would report it."
     },
     {
       "id": "attention-report",
       "question": "What needs attention in the catalog?",
       "passed": true,
       "problems": [],
-      "seconds": 25.5,
-      "answer": "All 19 services in the catalog have at least one flag. None has failing CI or open issues. The flags are missing CODEOWNERS, missing CI, and staleness.\n\n**Missing CODEOWNERS (all 19)**\nThis is the one gap every service shares.\n\n**No CI and stale (12 services)**\nThe list below runs from least to most stale (days since last push).\n- Semantic-Code-Search-and-Recommendation-Using-Neural-Embeddings: 214\n- Smart_Closet: 280\n- Virtual-Closet: 406\n- AgroRishi: 544\n- Card, Xylophone, Pokepedia, Dice, Clima and BMI-Calculator: 602 each\n- GrindAnime: 807\n- ProdigyInfotech_CS_Tasks: 866\n\n**No CI, but recently active (2 services)**\n- servicelens-mcp\n- Solve-Git-push\n\n**Stale, but has CI (1 service)**\n- Deeyan-Vadwala: 246 days since the last push\n\n**Only CODEOWNERS missing (4 services)**\n- cs6620-fall2025-public\n- cs6620-fall2025-week4\n- Phoenix-Voice-Controlled-Virtual-Assistant\n- skills-hello-github-actions\n\n**What I'd do first**\n1. Add CODEOWNERS everywhere. It's one small file per repo, and it clears the only flag on four of them.\n2. Add CI to `servicelens-mcp`, since it's your active project and has an offline test suite that CI could run.\n3. Consider archiving the 12 stale, no-CI repos instead of fixing them. Most look like old tutorial or practice projects, and archiving would clear their flags.\n\nI can draft the CODEOWNERS files or a GitHub Actions workflow for `servicelens-mcp` if you want."
+      "seconds": 28.2,
+      "answer": "All 19 active services need attention, and none of them has failing CI or open issues. The report checked every service, so the list is complete.\n\n**Missing CODEOWNERS (all 19).** No repo has an owner file.\n\n**No CI (14 of 19).** The five that do have CI are `Deeyan-Vadwala`, `cs6620-fall2025-public`, `cs6620-fall2025-week4`, `Phoenix-Voice-Controlled-Virtual-Assistant` and `skills-hello-github-actions`.\n\n**Stale (13 of 19).** The report flags a repo as stale when its last push is more than 90 days ago. These are the worst:\n- `ProdigyInfotech_CS_Tasks`: 866 days\n- `GrindAnime`: 807 days\n- `Card`, `Xylophone`, `Pokepedia`, `Dice`, `Clima`, `BMI-Calculator`: 602 days each\n- `AgroRishi`: 544 days\n- `Virtual-Closet`: 406 days\n- `Smart_Closet`: 280 days\n- `Deeyan-Vadwala`: 246 days\n- `Semantic-Code-Search-and-Recommendation-Using-Neural-Embeddings`: 214 days\n\n**What to fix first**\n1. **Active repos with no CI and no owner:** `servicelens-mcp` and `Solve-Git-push` are the only two in this state that aren't stale. Of the two, `servicelens-mcp` is the one worth adding CI to.\n2. **Archive the old repos:** the stale ones with no CI (for example `Card`, `Dice`, `Clima`, `Xylophone`) look like tutorial or practice projects. Archiving them would clear most of the list.\n3. **Add a CODEOWNERS file:** one file per repo you keep. That fixes the one flag every repo has.\n\nI can draft a CODEOWNERS file and a basic CI workflow for `servicelens-mcp` if you'd like."
     }
   ]
 }

@@ -131,10 +131,24 @@ class ToolTests(unittest.TestCase):
         routes = repos_route(repo("api"), repo("web"))
         self.assertEqual(self.run_with(routes, s.list_services), ["api", "web"])
 
-    def test_unknown_service_gives_helpful_error(self):
-        with self.assertRaises(s.GitHubError) as ctx:
-            self.run_with({}, s.get_service_owner, "nope")
-        self.assertIn("list_services", str(ctx.exception))
+    def test_unknown_service_returns_helpful_message_for_each_tool(self):
+        for tool in (
+            s.get_service_owner,
+            s.get_service_version,
+            s.get_service_health,
+        ):
+            result = self.run_with({}, tool, "nope")
+            self.assertIsInstance(result, str)
+            self.assertIn("list_services", result)
+
+    def test_get_service_unknown_returns_error_field(self):
+        result = self.run_with({}, s.get_service, "nope")
+        self.assertIn("list_services", result["error"])
+
+    def test_rate_limit_message_reaches_the_agent(self):
+        routes = {f"/repos/{OWNER}/api": s.GitHubError("rate limit hit")}
+        result = self.run_with(routes, s.get_service_owner, "api")
+        self.assertEqual(result, "rate limit hit")
 
     def test_owner_falls_back_to_repo_account(self):
         routes = {f"/repos/{OWNER}/api": repo("api")}

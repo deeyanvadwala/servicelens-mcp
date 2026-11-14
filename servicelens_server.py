@@ -179,54 +179,73 @@ def search_services(query: str) -> list[dict]:
 def get_service(name: str) -> dict:
     """Get a full overview of one service: description, owner, version,
     language, open issues, last activity and URL. Use this when the user
-    wants everything about a service."""
-    repo = _repo(name)
-    version, kind = _version(repo["name"])
-    return {
-        "name": repo["name"],
-        "description": repo.get("description"),
-        "owner": _codeowners(repo["name"]) or repo["owner"]["login"],
-        "version": version or "no releases or tags",
-        "version_source": kind,
-        "language": repo.get("language"),
-        "open_issues": repo.get("open_issues_count"),
-        "last_push": repo.get("pushed_at"),
-        "archived": repo.get("archived"),
-        "url": repo["html_url"],
-    }
+    wants everything about a service. If the service does not exist, the
+    result has an 'error' field explaining what to do."""
+    try:
+        repo = _repo(name)
+        version, kind = _version(repo["name"])
+        return {
+            "name": repo["name"],
+            "description": repo.get("description"),
+            "owner": _codeowners(repo["name"]) or repo["owner"]["login"],
+            "version": version or "no releases or tags",
+            "version_source": kind,
+            "language": repo.get("language"),
+            "open_issues": repo.get("open_issues_count"),
+            "last_push": repo.get("pushed_at"),
+            "archived": repo.get("archived"),
+            "url": repo["html_url"],
+        }
+    except GitHubError as e:
+        return {"error": str(e)}
 
 
 @mcp.tool()
 def get_service_owner(name: str) -> str:
     """Return who owns a service. Uses the repo's CODEOWNERS file when it
-    has one, otherwise falls back to the GitHub account that owns the repo."""
-    repo = _repo(name)
-    code_owners = _codeowners(repo["name"])
-    if code_owners:
-        return f"{repo['name']} is owned by {code_owners} (from CODEOWNERS)"
-    return (
-        f"{repo['name']} has no CODEOWNERS file; "
-        f"the repository belongs to {repo['owner']['login']}"
-    )
+    has one, otherwise falls back to the GitHub account that owns the repo.
+    If the service does not exist, the result explains how to find valid names."""
+    try:
+        repo = _repo(name)
+        code_owners = _codeowners(repo["name"])
+        if code_owners:
+            return f"{repo['name']} is owned by {code_owners} (from CODEOWNERS)"
+        return (
+            f"{repo['name']} has no CODEOWNERS file; "
+            f"the repository belongs to {repo['owner']['login']}"
+        )
+    except GitHubError as e:
+        return str(e)
 
 
 @mcp.tool()
 def get_service_version(name: str) -> str:
     """Return the version a service is at: its latest GitHub release, or its
-    latest git tag if there are no releases."""
-    repo = _repo(name)
-    version, kind = _version(repo["name"])
-    if version:
-        return f"{repo['name']} is at version {version} (latest {kind})"
-    return f"{repo['name']} has no releases or tags, so no version is known"
+    latest git tag if there are no releases. If the service does not exist,
+    the result explains how to find valid names."""
+    try:
+        repo = _repo(name)
+        version, kind = _version(repo["name"])
+        if version:
+            return f"{repo['name']} is at version {version} (latest {kind})"
+        return f"{repo['name']} has no releases or tags, so no version is known"
+    except GitHubError as e:
+        return str(e)
 
 
 @mcp.tool()
 def get_service_health(name: str) -> str:
     """Return the status of the most recent CI run (GitHub Actions) on the
-    service's default branch, e.g. success, failure, or in_progress."""
-    repo = _repo(name)
-    return f"{repo['name']}: latest CI run on {repo['default_branch']} = {_health(repo)}"
+    service's default branch, e.g. success, failure, or in_progress. If the
+    service does not exist, the result explains how to find valid names."""
+    try:
+        repo = _repo(name)
+        return (
+            f"{repo['name']}: latest CI run on {repo['default_branch']} "
+            f"= {_health(repo)}"
+        )
+    except GitHubError as e:
+        return str(e)
 
 
 @mcp.tool()
