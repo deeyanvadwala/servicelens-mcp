@@ -15,6 +15,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timezone
 
 from mcp.server.mcpserver import MCPServer
 
@@ -126,6 +127,21 @@ def _health(repo: dict) -> str:
     return run["conclusion"] or run["status"]
 
 
+FAILING = ("failure", "timed_out", "startup_failure")
+
+
+def _days_since(iso: str | None) -> int | None:
+    if not iso:
+        return None
+    dt = datetime.fromisoformat(iso.replace("Z", "+00:00"))
+    return (datetime.now(timezone.utc) - dt).days
+
+
+def _active_repos(limit: int = 30) -> list[dict]:
+    """Non-archived repos, most recently pushed first (capped to save API calls)."""
+    return [r for r in _repos() if not r.get("archived")][:limit]
+
+
 # --- Tools ------------------------------------------------------------------
 # The docstrings matter: the model reads them to decide when to call each tool.
 
@@ -214,14 +230,18 @@ def get_service_health(name: str) -> str:
 
 
 @mcp.tool()
-def unhealthy_services() -> list[dict]:
-    """List services whose latest CI run failed, with their owner so the
-    user knows who to contact. Checks the 20 most recently active repos."""
-    out = []
-    for r in [r for r in _repos() if not r.get("archived")][:20]:
+def unhealthy_services() -> dict:
+    """List services whose latest CI run failed, with owner and URL so the
+    user knows who to contact. Also reports how many services have no CI at
+    all, because those are not monitored. Checks the 20 most active repos."""
+    failing, no_ci, checked = [], 0, 0
+    for r in _active_repos(20):
         status = _health(r)
-        if status in ("failure", "timed_out", "startup_failure"):
-            out.append(
+        checked += 1
+        if status.startswith("unknown"):
+            no_ci += 1
+        elif status in FAILING:
+            failing.append(
                 {
                     "name": r["name"],
                     "ci_status": status,
@@ -229,7 +249,101 @@ def unhealthy_services() -> list[dict]:
                     "url": r["html_url"],
                 }
             )
-    return out
+    result = {"checked": checked, "failing_ci": failing, "no_ci_configured": no_ci}
+    if no_ci:
+        result["note"] = (
+            "Services with no CI are not monitored, so an empty failing list "
+            "does not mean everything is healthy."
+        )
+    return result
+
+
+@mcp.tool()
+def stale_services(days: int = 90) -> list[dict]:
+    """List services with no pushes in the given number of days (default 90),
+    oldest first. Use this to find abandoned or neglected services."""
+    out = []
+    for r in _active_repos(100):
+        d = _days_since(r.get("pushed_at"))
+        if d is not None and d >= days:
+            out.append(
+                {
+                    "name": r["name"],
+                    "days_since_last_push": d,
+                    "last_push": r.get("pushed_at"),
+                    "url": r["html_url"],
+                }
+            )
+    return sorted(out, key=lambda x: -x["days_since_last_push"])
+
+
+@mcp.tool()
+def services_without_owner() -> list[dict]:
+    """List services that have no CODEOWNERS file, meaning nobody is
+    explicitly responsible for them. Checks the 30 most active repos."""
+    return [
+        {
+            "name": r["name"],
+            "repo_account": r["owner"]["login"],
+            "url": r["html_url"],
+        }
+        for r in _active_repos(30)
+        if not _codeowners(r["name"])
+    ]
+
+
+@mcp.tool()
+def services_without_ci() -> list[str]:
+    """List services with no CI runs (no GitHub Actions history), so their
+    health is unknown. Checks the 30 most active repos."""
+    return [
+        r["name"]
+        for r in _active_repos(30)
+        if _health(r).startswith("unknown")
+    ]
+
+
+@mcp.tool()
+def attention_report(stale_days: int = 90) -> dict:
+    """One combined report of services that need attention. Flags failing CI,
+    missing CI, missing CODEOWNERS, and staleness, worst first. Use this for
+    broad questions like 'what needs attention?' or 'what should I fix first?'.
+    Checks the 30 most active repos."""
+    repos = _active_repos(30)
+    report, checked, note = [], 0, None
+    try:
+        for r in repos:
+            flags = []
+            status = _health(r)
+            if status in FAILING:
+                flags.append(f"CI {status}")
+            elif status.startswith("unknown"):
+                flags.append("no CI")
+            if not _codeowners(r["name"]):
+                flags.append("no CODEOWNERS")
+            d = _days_since(r.get("pushed_at"))
+            if d is not None and d >= stale_days:
+                flags.append(f"stale ({d} days since last push)")
+            checked += 1
+            if flags:
+                report.append(
+                    {
+                        "name": r["name"],
+                        "flags": flags,
+                        "open_issues": r.get("open_issues_count"),
+                        "url": r["html_url"],
+                    }
+                )
+    except GitHubError as e:
+        note = f"Report is incomplete: {e}"
+    report.sort(key=lambda x: -len(x["flags"]))
+    return {
+        "checked": checked,
+        "total_active_services": len(repos),
+        "needs_attention": report,
+        "incomplete": note is not None,
+        "note": note,
+    }
 
 
 if __name__ == "__main__":
