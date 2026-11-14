@@ -1,5 +1,7 @@
 # ServiceLens
 
+![tests](https://github.com/deeyanvadwala/servicelens-mcp/actions/workflows/tests.yml/badge.svg)
+
 An [MCP](https://modelcontextprotocol.io) server that lets an AI agent answer questions about a service catalog using live data. Ask "who owns this service?" or "what needs attention?" in plain English and the agent calls real tools instead of guessing.
 
 ServiceLens treats every public repository under a GitHub user or organization as a **service**:
@@ -13,6 +15,20 @@ ServiceLens treats every public repository under a GitHub user or organization a
 
 ![What needs attention in the catalog](docs/attention-report-1.png)
 ![Stale services and priorities](docs/attention-report-2.png)
+
+## Architecture
+
+```mermaid
+flowchart LR
+    You["You"] -->|"question"| Agent["Claude Code<br/>(the agent)"]
+    Agent -->|"MCP tool calls"| Server["ServiceLens<br/>MCP server"]
+    Server -->|"REST + 60s cache"| GitHub["GitHub API<br/>repos, CODEOWNERS,<br/>releases, tags, CI runs"]
+    GitHub -->|"live data"| Server
+    Server -->|"results or<br/>readable errors"| Agent
+    Agent -->|"answer"| You
+```
+
+The agent decides which tools to call from each tool's name, description, and input schema. The server holds no data of its own, so every answer reflects GitHub at the moment you ask.
 
 ## What makes it more than an API wrapper
 
@@ -43,7 +59,7 @@ Requires Python 3.10+. Tested with `mcp` 2.3.0 and Claude Code 2.1.325.
 ```bash
 python -m venv .venv
 .venv\Scripts\Activate.ps1        # macOS/Linux: source .venv/bin/activate
-pip install "mcp[cli]"
+pip install -r requirements.txt
 ```
 
 Connect it to Claude Code (use absolute paths to the venv's Python):
@@ -112,6 +128,8 @@ The expected answers depend on the live data of the demo account. If you point `
 
 ```
 servicelens_server.py     the MCP server
+requirements.txt          pinned dependency (mcp 2.x)
+.github/workflows/        CI: runs the unit tests on every push
 tests/                    offline unit tests
 evals/                    eval cases, runner, and latest results
 docs/                     screenshots
