@@ -14,6 +14,7 @@ Each case costs one Claude Code request on your account.
 
 import argparse
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -26,6 +27,7 @@ CASES_FILE = Path(__file__).resolve().parent / "cases.json"
 RESULTS_FILE = Path(__file__).resolve().parent / "last_run.json"
 SERVER_NAME = "servicelens"
 TIMEOUT_SECONDS = 180
+BLOCKED_TOOLS = ["Read", "Glob", "Grep", "Bash", "Edit", "Write"]
 
 
 def load_cases() -> list[dict]:
@@ -44,6 +46,8 @@ def ask(claude: str, question: str) -> str:
         "10",
         "--allowedTools",
         f"mcp__{SERVER_NAME}",  # let the agent call this server's tools unprompted
+        "--disallowedTools",  # keep the agent from reading local files, so answers
+        *BLOCKED_TOOLS,  # have to come from the MCP server
     ]
     proc = subprocess.run(
         cmd,
@@ -76,6 +80,9 @@ def grade(case: dict, answer: str) -> list[str]:
     any_of = case.get("must_include_any")
     if any_of and not any(n.lower() in text for n in any_of):
         problems.append("expected at least one of: " + ", ".join(any_of))
+    for pattern in case.get("must_match", []):
+        if not re.search(pattern, answer, re.IGNORECASE):
+            problems.append(f"expected text matching /{pattern}/")
     for needle in case.get("must_not_include", []):
         if needle.lower() in text:
             problems.append(f"should not contain '{needle}'")

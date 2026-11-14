@@ -26,7 +26,8 @@
   {
     "id": "no-codeowners",
     "question": "Which services have no CODEOWNERS file?",
-    "must_include_any": ["all 19", "every", "all of", "none of", "servicelens-mcp"]
+    "must_include": ["19"],
+    "must_not_include": ["18 services"]
   },
   {
     "id": "most-stale",
@@ -49,9 +50,8 @@
   {
     "id": "version-none",
     "question": "What version is servicelens-mcp at?",
-    "must_include_any": [
-      "no release", "no tag", "no version", "not tagged", "no known",
-      "none", "hasn't been tagged", "no releases"
+    "must_match": [
+      "\\bno (github |git |known )?(releases?|tags?|version)|hasn.t been tagged|not (been )?tagged|\\bnone\\b"
     ]
   },
   {
